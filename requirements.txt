@@ -1,0 +1,6 @@
+transformers
+torch
+tensorflow
+streamlit
+streamlit-extras
+textblob
