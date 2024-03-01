@@ -1,32 +1,23 @@
+from transformers import MBartForConditionalGeneration, MBart50Tokenizer
 import streamlit as st
-from textblob import TextBlob
-from transformers import pipeline
-from streamlit_extras.let_it_rain import rain
-st.title("Sentiment Analysis App")
-pipe = pipeline(model = "lxyuan/distilbert-base-multilingual-cased-sentiments-student")
 
+@st.cache(allow_output_mutation=True, suppress_st_warning=True)
+def download_model():
+    model_name = "facebook/mbart-large-50-many-to-many-mmt"
+    model = MBartForConditionalGeneration.from_pretrained(model_name)
+    tokenizer = MBart50Tokenizer.from_pretrained(model_name)
+    return model, tokenizer
+model, tokenizer = download_model()
 
-message=st.text_area("Please Enter your text")
-if st.button("Analyze the Sentiment"):
-    output_model = pipe(message)
-    result = output_model[0]['label']
-    if result == "POSITIVE".lower():
-        st.warning("The predicted sentiment is positive!!")
-        rain(emoji="😄",
-             font_size=30,
-             falling_speed=2,
-             animation_length=30,)
-    elif result=="NEUTRAL".lower():
-        st.warning("The predicted sentiment is neutral")
-        rain(emoji="😑",
-             font_size=30,
-             falling_speed=2,
-             animation_length=30,)
-    else:
-        st.warning("The predicted sentiment is negative")
-        st.image("")
-        rain(emoji="😠",
-             font_size=30,
-             falling_speed=2,
-             animation_length=30,)
-    st.success(result)
+def main():
+    st.title("Englist to Tamil Translator")
+    text = st.text_area("Enter the text to translate")
+    if st.button("Translate"):
+        model_name = "facebook/mbart-large-50-many-to-many-mmt"
+        tokenizer.src_lang = "en_XX"
+        encoded_text = tokenizer(text, return_tensors="pt")
+        generated_tokens = model.generate(**encoded_text, forced_bos_token_id=tokenizer.lang_code_to_id["ta_IN"])
+        out = tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)
+        st.success(str(out).strip('][\''))
+if __name__ == "__main__":
+    main()
