@@ -1,6 +1,5 @@
 transformers
+streamlit
 torch
 tensorflow
-streamlit
-streamlit-extras
-textblob
+sentencepiece
