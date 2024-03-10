@@ -1,5 +1,5 @@
-transformers
+gtts
+pygame
 streamlit
-torch
-tensorflow
-sentencepiece
+speechrecognition
+googletrans==3.1.0a0
